@@ -1,0 +1,61 @@
+.container {
+    background-color: pink;
+    font-size: 2vh;
+    padding: 1%;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    /* Adds space between buttons */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    /* Adds space at the top */
+}
+
+.nav-button {
+    padding: 12px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.previous {
+    background: linear-gradient(135deg, #ff3366, #ff6699);
+    /* Red to pink gradient */
+}
+
+.next {
+    background: linear-gradient(135deg, #ff3366, #ff80ab);
+    /* Light pink to deeper pink gradient */
+}
+
+.home {
+    background: linear-gradient(135deg, #ff5c8d, #ff3366);
+    /* Another shade of red-pink */
+}
+
+.nav-button:hover {
+    transform: scale(1.1);
+    /* Slightly enlarges the button */
+    box-shadow: 0px 4px 15px rgba(255, 105, 180, 0.8);
+    /* Glowing pink effect */
+}
+
+.nav-button:active {
+    transform: scale(0.95);
+    /* Simulates a press effect */
+}
+
+.nav-button:focus {
+    outline: none;
+    /* Removes the default focus outline */
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.8);
+    /* Adds a glowing effect when focused */
+}

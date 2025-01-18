@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe with Material UI</title>
+    <!-- Material UI CSS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            background-color: skyblue;
+            margin: 20px 0;
+            width: 98%;
+            text-align: center;
+            margin-top: 0%;
+            font-size: 2rem;
+            color: black;
+        }
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            width: 300px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            background-color: #1976d2;
+            border: 1px solid #000;
+            border-radius: 4px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .cell:hover {
+            background-color: #1565c0;
+            transform: scale(1.1);
+        }
+        .cell.taken {
+            pointer-events: none;
+        }
+        .cell:nth-child(odd) {
+            background-color: #1e88e5;
+        }
+        .cell:nth-child(even) {
+            background-color: #42a5f5;
+        }
+        .dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+        }
+        .dialog.open {
+            display: block;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        .overlay.open {
+            display: block;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: 1px solid #1976d2;
+            background: linear-gradient(to right, #42a5f5, #1e88e5);
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(to right, #1e88e5, #1976d2);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="scoreboard">
+        <div>X Wins: <span id="xScore">0</span></div>
+        <div>O Wins: <span id="oScore">0</span></div>
+    </div>
+    <div id="root">
+        <div class="board" id="board"></div>
+        <div class="overlay" id="overlay"></div>
+        <div class="dialog" id="dialog">
+            <h2 id="winnerMessage"></h2>
+            <button id="restartButton">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const boardElement = document.getElementById('board');
+        const dialog = document.getElementById('dialog');
+        const overlay = document.getElementById('overlay');
+        const winnerMessage = document.getElementById('winnerMessage');
+        const restartButton = document.getElementById('restartButton');
+        const xScoreElement = document.getElementById('xScore');
+        const oScoreElement = document.getElementById('oScore');
+
+        let board = Array(9).fill(null);
+        let isXTurn = true;
+        let xScore = 0;
+        let oScore = 0;
+
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function createBoard() {
+            boardElement.innerHTML = '';
+            board.forEach((cell, index) => {
+                const cellElement = document.createElement('div');
+                cellElement.classList.add('cell');
+                cellElement.textContent = cell;
+                cellElement.addEventListener('click', () => handleClick(index));
+                boardElement.appendChild(cellElement);
+            });
+        }
+
+        function handleClick(index) {
+            if (board[index]) return;
+
+            board[index] = isXTurn ? 'X' : 'O';
+            isXTurn = !isXTurn;
+            checkWinner();
+            createBoard();
+        }
+
+        function checkWinner() {
+            for (let combination of winningCombinations) {
+                const [a, b, c] = combination;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    showWinner(board[a]);
+                    return;
+                }
+            }
+
+            if (board.every(cell => cell)) {
+                showWinner('Draw');
+            }
+        }
+
+        function showWinner(winner) {
+            if (winner === 'X') {
+                xScore++;
+                xScoreElement.textContent = xScore;
+            } else if (winner === 'O') {
+                oScore++;
+                oScoreElement.textContent = oScore;
+            }
+            winnerMessage.textContent = winner === 'Draw' ? "It's a Draw!" : `${winner} Wins!`;
+            dialog.classList.add('open');
+            overlay.classList.add('open');
+        }
+
+        function restartGame() {
+            board = Array(9).fill(null);
+            isXTurn = true;
+            dialog.classList.remove('open');
+            overlay.classList.remove('open');
+            createBoard();
+        }
+
+        restartButton.addEventListener('click', restartGame);
+
+        createBoard();
+    </script>
+</body>
+</html>
